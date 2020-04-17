@@ -15,7 +15,7 @@ This is a react.js application based on by Semantic UI and [News API](https://ne
 - Search for news
 
 .
-![Table](https://github.com/Ecuki/news-app)
+![Table](<https://github.com/Ecuki/news-app/blob/master/src/assets/ezgif.com-optimize%20(3).gif>)
 
 ## Usage
 
