@@ -86,6 +86,14 @@ function App() {
     <SelectionContext.Provider value={{ selected, setSelection, sources }}>
       <MenuBar />
       <Container>
+        <Header
+          as="h2"
+          attached="top"
+          textAlign="right"
+          style={{ marginBottom: 20 }}
+        >
+          News
+        </Header>
         <animated.div style={props}>
           {loadingNews ? (
             <Segment
@@ -117,6 +125,14 @@ function App() {
             </List>
           )}
         </animated.div>
+        <Header
+          as="h2"
+          attached="bottom"
+          textAlign="right"
+          style={{ marginTop: 20 }}
+        >
+          News
+        </Header>
       </Container>
     </SelectionContext.Provider>
   );
