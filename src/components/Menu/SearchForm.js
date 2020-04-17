@@ -4,12 +4,13 @@ import { MenuSelectionContext } from "./MenuBar";
 
 import { Icon, Form } from "semantic-ui-react";
 export default function SearchForm() {
-  const { setSelection } = useContext(SelectionContext);
+  const { setSelection, setActivePage } = useContext(SelectionContext);
   const { localSelection } = useContext(MenuSelectionContext);
   function handleSearch(e, result) {
     e.preventDefault();
     setSelection({ ...localSelection, query: e.target.query.value });
     e.target.query.value = "";
+    setActivePage(1);
   }
   return (
     <Form fluid inverted onSubmit={handleSearch}>

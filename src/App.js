@@ -20,8 +20,8 @@ import MenuBar from "./components/Menu";
 import Logo from "./components/Logo";
 import { initialSelect } from "./utils/constans";
 
-// import { API_KEY } from "./config"; //development
-const API_KEY = process.env.REACT_APP_API_KEY; //production
+import { API_KEY } from "./config"; //development
+// const API_KEY = process.env.REACT_APP_API_KEY; //production
 
 const paginationStyle = {
   width: "100vw",
@@ -104,7 +104,9 @@ function App() {
 
   if (errorNews) return <div>Error: {errorNews.message}</div>;
   return (
-    <SelectionContext.Provider value={{ selected, setSelection, sources }}>
+    <SelectionContext.Provider
+      value={{ selected, setSelection, sources, setActivePage }}
+    >
       <MenuBar />
       <Container>
         <Logo attached="top" />
