@@ -1,0 +1,10 @@
+.menu {
+  transform: translateX(-80%);
+  transition: 0.5s;
+  height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.menu:hover {
+  transform: translateX(0);
+}

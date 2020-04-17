@@ -1,5 +1,6 @@
 export const data = {
   category: [
+    "all",
     "business",
     "entertainment",
     "general",
@@ -9,6 +10,7 @@ export const data = {
     "technology",
   ],
   language: [
+    "all",
     "ar",
     "de",
     "en",
@@ -25,6 +27,7 @@ export const data = {
     "zh",
   ],
   country: [
+    "all",
     "ae",
     "ar",
     "at",
@@ -80,4 +83,5 @@ export const data = {
     "ve",
     "za",
   ],
+  sources: [],
 };

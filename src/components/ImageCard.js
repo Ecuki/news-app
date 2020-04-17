@@ -16,7 +16,7 @@ function ImageCard({ url, link }) {
   }));
 
   return (
-    <a href={link}>
+    <a href={link} target="_blank">
       <animated.div
         className="card"
         onMouseMove={({ clientX: x, clientY: y }) => set({ xys: calc(x, y) })}

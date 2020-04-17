@@ -1,123 +1,124 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import { useAsync } from "react-async-hook";
 import { useSpring, animated } from "react-spring";
 import "./App.css";
 import "semantic-ui-css/semantic.min.css";
-import { Button, Form, List, Container, Menu, Grid } from "semantic-ui-react";
+import {
+  List,
+  Container,
+  Segment,
+  Dimmer,
+  Loader,
+  Icon,
+  Header,
+  Button,
+  Divider,
+  Pagination,
+} from "semantic-ui-react";
 
 import { API_KEY } from "./config";
 import Article from "./components/Article";
-import MenuBar from "./components/MenuBar";
+import MenuBar from "./components/Menu";
+import { initialSelect } from "./utils/constans";
 
-const fetchNews = async (sources) => {
-  const category = sources.category ? `category=${category}&` : "";
-  const language = sources.language ? `language=${language}&` : "language=en&";
-  const country = sources.country ? `country=${country}&` : "";
-  const query = sources.query ? `q=${query}&` : "";
-  const url =
-    "http://newsapi.org/v2/top-headlines?" +
-    category +
-    language +
-    country +
-    query +
-    `apiKey=${API_KEY}`;
+export const SelectionContext = createContext();
 
+function getArticlesUrl(sources) {
+  console.log(sources);
+  const sourcesString =
+    sources.sources.length !== 0
+      ? `sources=${sources.sources.toString()}&`
+      : "";
+  const category = sources.category ? `category=${sources.category}&` : "";
+  const language = sources.language
+    ? `language=${sources.language}&`
+    : sources.sources.length !== 0
+    ? ""
+    : "language=en&";
+  const country = sources.country ? `country=${sources.country}&` : "";
+  const query = sources.query ? `q=${sources.query}&` : "";
+
+  if (sources.sources.length === 0) {
+    return `http://newsapi.org/v2/top-headlines?${category +
+      language +
+      country +
+      query}apiKey=${API_KEY}`;
+  } else {
+    return `http://newsapi.org/v2/everything?${sourcesString +
+      language +
+      query}apiKey=${API_KEY}`;
+  }
+}
+function getAllSourcesUrl() {
+  return `https://newsapi.org/v2/sources?apiKey=${API_KEY}`;
+}
+
+const fetchNews = async (url) => {
   return (await fetch(url)).json();
 };
 
 function App() {
-  const id = 1;
-  const { loading, error, result } = useAsync(fetchNews, [id]);
-
-  const [articles, setArticles] = useState([]);
   const props = useSpring({ opacity: 1, from: { opacity: 0 } });
+  const [articles, setArticles] = useState([]);
+  const [sources, setSources] = useState([]);
+  const [selected, setSelection] = useState(initialSelect);
+  const { loading: loadingNews, error: errorNews, result: newsData } = useAsync(
+    fetchNews,
+    [getArticlesUrl(selected)]
+  );
+
+  const {
+    loading: loadingSources,
+    error: errorSources,
+    result: sourcesData,
+  } = useAsync(fetchNews, [getAllSourcesUrl()]);
+
   useEffect(() => {
-    result && setArticles(result.articles);
-    console.log(result?.articles);
-  }, [result]);
+    newsData && setArticles(newsData.articles);
+  }, [newsData]);
 
-  const [state, setState] = useState({
-    todo: "",
-    todos: ["item 1", "item 2", "item 3"].map((text, id) => ({ id, text })),
-  });
+  useEffect(() => {
+    sourcesData && setSources(sourcesData.sources);
+  }, [sourcesData]);
 
-  state.id = state.todos.length;
-
-  function add(event) {
-    event.preventDefault();
-
-    setState({
-      id: state.id + 1,
-      todos: [...state.todos, { id: state.id, text: state.todo || "-" }],
-      todo: "",
-    });
-  }
-  function remove(event) {
-    setState({
-      ...state,
-      todos: state.todos.filter(
-        (item) => item.id !== +event.currentTarget.getAttribute("data-id")
-      ),
-    });
-  }
-  function handleChange({ target: { name, value } }) {
-    setState({ ...state, [name]: value });
-  }
-
-  if (error) return <div>Error: {error.message}</div>;
-
+  if (errorNews) return <div>Error: {errorNews.message}</div>;
   return (
-    <>
+    <SelectionContext.Provider value={{ selected, setSelection, sources }}>
       <MenuBar />
       <Container>
-        {" "}
         <animated.div style={props}>
-          <List relaxed>
-            {articles &&
-              articles.map((item) => (
-                // The next line is what controls
-                // animated transitions
-
-                <List.Item>
-                  <Article item={item} remove={remove} />
-                </List.Item>
-              ))}
-          </List>
+          {loadingNews ? (
+            <Segment
+              style={{ height: "100vh", width: "100vw" }}
+              textAlign="center"
+            >
+              <Dimmer active inverted>
+                <Loader inverted>Loading</Loader>
+              </Dimmer>
+            </Segment>
+          ) : articles.length === 0 ? (
+            <Segment placeholder style={{ height: "100vh" }}>
+              <Header icon>
+                Sorry
+                <Divider />
+                <Icon name="pdf file outline" />
+                <Divider />
+                No results for this search.
+              </Header>
+            </Segment>
+          ) : (
+            <List relaxed>
+              {articles &&
+                articles.map((item) => (
+                  <List.Item key={item.publishedAt}>
+                    <Article item={item} />
+                  </List.Item>
+                ))}
+            </List>
+          )}
         </animated.div>
-        <Form
-          onSubmit={state.todo !== "" && add}
-          autoComplete="off"
-          loading={loading}
-        >
-          <div className="col-10">
-            <div className="input-group mt-4 mb-1">
-              <input
-                type="text"
-                className="form-control"
-                id="todoField"
-                placeholder="Todo item"
-                name="todo"
-                value={state.todo}
-                onChange={handleChange}
-              />
-              <div className="input-group-append">
-                <Button
-                  onClick={state.todo !== "" && add}
-                  className="btn btn-outline-success"
-                  type="button"
-                >
-                  Add Item
-                </Button>
-              </div>
-            </div>
-            <small id="emailHelp" className="form-text text-muted">
-              Item Count: {state.todos.length}
-            </small>
-          </div>
-        </Form>
       </Container>
-    </>
+    </SelectionContext.Provider>
   );
 }
-
 export default App;
