@@ -15,12 +15,13 @@ import {
   Pagination,
 } from "semantic-ui-react";
 
-import { API_KEY } from "./config";
 import Article from "./components/Article";
 import MenuBar from "./components/Menu";
 import Logo from "./components/Logo";
 import { initialSelect } from "./utils/constans";
+// import { API_KEY } from "./config";
 
+const API_KEY = process.env.REACT_APP_API_KEY;
 const paginationStyle = {
   width: "100vw",
   height: 40,
@@ -92,7 +93,6 @@ function App() {
 
   useEffect(() => {
     newsData && setArticles(newsData.articles);
-    newsData && console.log(newsData);
   }, [newsData]);
 
   useEffect(() => {

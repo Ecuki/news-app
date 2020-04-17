@@ -8,7 +8,6 @@ export default function Article({ item }) {
     item.description !== "" && item.description !== "Kliknij i zobacz więcej."
       ? item.description
       : item.content;
-  // console.log(item);
 
   return (
     <Grid relaxed columns={2} centered>
@@ -40,10 +39,8 @@ export default function Article({ item }) {
               <Icon name="eye" />
               See More
             </a>
-            <a>
-              <Icon name="world" />
-              {item.source.name}
-            </a>
+
+            {item.source.name}
           </Card.Content>
         </Card>
       </Grid.Column>

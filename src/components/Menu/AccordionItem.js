@@ -87,8 +87,6 @@ function AccordionItem({ accordion, sourcesNumber, data }) {
 
       <Accordion.Content active={activeAccordion === accordion.index}>
         {data.map((item) => {
-          // console.log(item);
-          // console.log(item?.id ?? item + Object.keys(data)[accordion.category]);
           return (
             <SelectionButton
               id={accordion.category}

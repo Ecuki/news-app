@@ -9,7 +9,6 @@ export default function SearchForm() {
   function handleSearch(e, result) {
     e.preventDefault();
     setSelection({ ...localSelection, query: e.target.query.value });
-    console.log(localSelection);
     e.target.query.value = "";
   }
   return (
