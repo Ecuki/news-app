@@ -34,7 +34,7 @@ const paginationStyle = {
 };
 
 export const SelectionContext = createContext();
-const baseUrl = "http://newsapi.org/v2";
+const baseUrl = "https://newsapi.org/v2";
 function getArticlesUrl(sources, activePage) {
   const sourcesString =
     sources.sources.length !== 0
