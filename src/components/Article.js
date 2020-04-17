@@ -53,7 +53,17 @@ export default function Article({ item }) {
 
 function ArticleAuthor({ author }) {
   if (author?.includes("[{")) {
-    JSON.parse(author);
+    const authorObject = JSON.parse(author);
+    return <Card.Meta>{authorObject[0].name}</Card.Meta>;
+  } else if (author?.includes("https://")) {
+    return (
+      <Card.Meta>
+        <a href={author} target="_blank">
+          <Icon name="eye" />
+          See More
+        </a>
+      </Card.Meta>
+    );
   }
 
   return <Card.Meta>{author}</Card.Meta>;

@@ -17,7 +17,7 @@ const MenuBar = () => {
   const [localSelection, setLocalSelection] = useState(initialSelect);
 
   return (
-    <Menu vertical fixed="top" className="menu" inverted>
+    <Menu vertical fixed="top" className="menuBar" inverted>
       <MenuSelectionContext.Provider
         value={{ localSelection, setLocalSelection }}
       >

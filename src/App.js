@@ -11,7 +11,6 @@ import {
   Loader,
   Icon,
   Header,
-  Button,
   Divider,
   Pagination,
 } from "semantic-ui-react";
@@ -19,12 +18,22 @@ import {
 import { API_KEY } from "./config";
 import Article from "./components/Article";
 import MenuBar from "./components/Menu";
+import Logo from "./components/Logo";
 import { initialSelect } from "./utils/constans";
 
-export const SelectionContext = createContext();
+const paginationStyle = {
+  width: "100vw",
+  height: 40,
+  position: "fixed",
+  bottom: 0,
+  right: 0,
+  display: "flex",
+  justifyContent: "center",
+};
 
-function getArticlesUrl(sources) {
-  console.log(sources);
+export const SelectionContext = createContext();
+const baseUrl = "http://newsapi.org/v2";
+function getArticlesUrl(sources, activePage) {
   const sourcesString =
     sources.sources.length !== 0
       ? `sources=${sources.sources.toString()}&`
@@ -37,20 +46,22 @@ function getArticlesUrl(sources) {
     : "language=en&";
   const country = sources.country ? `country=${sources.country}&` : "";
   const query = sources.query ? `q=${sources.query}&` : "";
-
+  const page = `page=${activePage}&`;
   if (sources.sources.length === 0) {
-    return `http://newsapi.org/v2/top-headlines?${category +
+    return `${baseUrl}/top-headlines?${category +
       language +
       country +
-      query}apiKey=${API_KEY}`;
+      query +
+      page}apiKey=${API_KEY}`;
   } else {
-    return `http://newsapi.org/v2/everything?${sourcesString +
+    return `${baseUrl}/everything?${sourcesString +
       language +
-      query}apiKey=${API_KEY}`;
+      query +
+      page}apiKey=${API_KEY}`;
   }
 }
 function getAllSourcesUrl() {
-  return `https://newsapi.org/v2/sources?apiKey=${API_KEY}`;
+  return `${baseUrl}/sources?apiKey=${API_KEY}`;
 }
 
 const fetchNews = async (url) => {
@@ -59,12 +70,15 @@ const fetchNews = async (url) => {
 
 function App() {
   const props = useSpring({ opacity: 1, from: { opacity: 0 } });
+  const articlesPerPage = 20;
+  const maxFreeArticles = 100;
+  const [activePage, setActivePage] = useState(1);
   const [articles, setArticles] = useState([]);
   const [sources, setSources] = useState([]);
   const [selected, setSelection] = useState(initialSelect);
   const { loading: loadingNews, error: errorNews, result: newsData } = useAsync(
     fetchNews,
-    [getArticlesUrl(selected)]
+    [getArticlesUrl(selected, activePage)]
   );
 
   const {
@@ -73,8 +87,12 @@ function App() {
     result: sourcesData,
   } = useAsync(fetchNews, [getAllSourcesUrl()]);
 
+  const handlePaginationChange = (e, { activePage }) =>
+    setActivePage(activePage);
+
   useEffect(() => {
     newsData && setArticles(newsData.articles);
+    newsData && console.log(newsData);
   }, [newsData]);
 
   useEffect(() => {
@@ -86,18 +104,11 @@ function App() {
     <SelectionContext.Provider value={{ selected, setSelection, sources }}>
       <MenuBar />
       <Container>
-        <Header
-          as="h2"
-          attached="top"
-          textAlign="right"
-          style={{ marginBottom: 20 }}
-        >
-          News
-        </Header>
+        <Logo attached="top" />
         <animated.div style={props}>
           {loadingNews ? (
             <Segment
-              style={{ height: "100vh", width: "100vw" }}
+              style={{ height: "100vh", width: "50vw", margin: "0 auto" }}
               textAlign="center"
             >
               <Dimmer active inverted>
@@ -125,14 +136,20 @@ function App() {
             </List>
           )}
         </animated.div>
-        <Header
-          as="h2"
-          attached="bottom"
-          textAlign="right"
-          style={{ marginTop: 20 }}
-        >
-          News
-        </Header>
+        <Logo attached="bottom" />
+        <Pagination
+          activePage={activePage}
+          onPageChange={handlePaginationChange}
+          size="mini"
+          boundaryRange={1}
+          defaultActivePage={1}
+          ellipsisItem={null}
+          firstItem={null}
+          lastItem={null}
+          siblingRange={1}
+          totalPages={Math.floor(maxFreeArticles / articlesPerPage)}
+          style={paginationStyle}
+        />
       </Container>
     </SelectionContext.Provider>
   );
