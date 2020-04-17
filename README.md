@@ -21,10 +21,10 @@ This is a react.js application based on by Semantic UI and [News API](https://ne
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-`git clone https://github.com/Ecuki/company-incomes`
-`cd news-app`
-`npm install`
-`npm start`
+`git clone https://github.com/Ecuki/company-incomes`<br />
+`cd news-app`<br />
+`npm install`<br />
+`npm start`<br />
 
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
